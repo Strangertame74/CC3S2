@@ -40,4 +40,4 @@ jobs:
       - name: Stop and clean Docker Compose
         run: |
          docker compose down  # Cambiar docker-compose a docker compose
-        working-directory: Semana1/Actividad1/devops-practice
+        working-directory: actividad1/devops-practice
