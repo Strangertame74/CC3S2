@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: actividad1/devops-practice
+        working-directory: semana1/devops-practice
  
       - name: Check Docker and Docker Compose versions
         run: |
@@ -32,7 +32,7 @@ jobs:
       - name: Build and run Docker Compose
         run: |
           docker compose up --build -d  # Cambiar docker-compose a docker compose
-        working-directory: actividad1/devops-practice
+        working-directory: semana1/devops-practice
 
       - name: Run tests
         run: docker exec devops-practice-container npm test
@@ -40,4 +40,4 @@ jobs:
       - name: Stop and clean Docker Compose
         run: |
          docker compose down  # Cambiar docker-compose a docker compose
-        working-directory: actividad1/devops-practice
+        working-directory: semana1/devops-practice
