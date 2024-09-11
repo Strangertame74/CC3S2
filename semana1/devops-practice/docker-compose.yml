@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: devios-practice-container
+    container_name: devops-practice-container
     build: .
     ports:
       - "3000:3000"
