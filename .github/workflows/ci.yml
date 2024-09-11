@@ -36,7 +36,10 @@ jobs:
 
       - name: Run tests
         run: docker exec devops-practice-container npm test
-
+        env:
+          PORT: 3001
+	working-directory: semana1/devops-practice
+	
       - name: Stop and clean Docker Compose
         run: |
          docker compose down  # Cambiar docker-compose a docker compose
