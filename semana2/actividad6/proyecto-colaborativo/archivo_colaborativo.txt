@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 
 Este es un cambio en la rama main
+=======
+Este es el contenido inicial del proyecto
+
+>>>>>>> 8236cd1 (Revert "nuevo cambio en main")
