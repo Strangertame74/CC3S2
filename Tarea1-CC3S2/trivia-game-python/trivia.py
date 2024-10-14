@@ -10,6 +10,8 @@ class Quiz:
     def __init__(self):
         self.questions=[]
         self.current_question_index=0
+        self.correct_answer=0
+        self.incorrect_answer=0
     def add_question(self,question):
         self.questions.append(question)
     def get_next_question(self):
@@ -17,4 +19,27 @@ class Quiz:
             question = self.questions[self.current_question_index]
             self.current_question_index += 1
             return question
-        return None  
+        return None
+    def answer_question(self,question,answer):
+        if (question.is_correct(answer)):
+            self.correct_answer+=1
+            return True
+        else:
+            self.incorrect_answer+=1
+            return False
+    def run_quiz():
+        quiz = Quiz()
+        while quiz.current_question_index < 10:
+            question = quiz.get_next_question()
+            if question:
+                print(question.description)
+                for idx, option in enumerate(question.options):
+                    print(f"{idx + 1}) {option}")
+                answer = input("Tu respuesta: ")
+                if quiz.answer_question(question, answer):
+                    print("¡Correcto!")
+                else:
+                    print("Incorrecto.")
+            else:
+                break
+        print(f"Juego terminado. Respuestas correctas: {quiz.correct_answers}, incorrectas:{quiz.incorrect_answers}")
