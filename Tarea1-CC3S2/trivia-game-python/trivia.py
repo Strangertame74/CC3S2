@@ -25,7 +25,7 @@ class Quiz:
             if question:
                 print(question.description)
                 for idx, option in enumerate(question.options):
-                    print(f"{idx + 1}) {option}")
+                    print(f"{idx + 1} {option}")
                 answer = input("Tu respuesta: ")
                 if quiz.answer_question(question, answer):
                     print("¡Correcto!")
