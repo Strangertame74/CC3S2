@@ -44,4 +44,8 @@ class Quiz:
                     print("Incorrecto.")
             else:
                 break
-        print(f"Juego terminado. Respuestas correctas: {quiz.correct_answers}, incorrectas:{quiz.incorrect_answers}")
+
+        print("Juego terminado.")
+        print(f"Preguntas contestadas: {quiz.current_question_index}")
+        print(f"Respuestas correctas: {quiz.correct_answers}")
+        print(f"Respuestas incorrectas: {quiz.incorrect_answers}")
