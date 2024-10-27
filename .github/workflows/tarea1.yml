@@ -17,8 +17,8 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-        working-directory: CC3S2/Tarea1-CC3S2
+        working-directory: Tarea1-CC3S2/trivia-game-python
 
       - name: Run tests
         run: pytest
-        working-directory: CC3S2/Tarea1-CC3S2
+        working-directory: Tarea1-CC3S2/trivia-game-python
