@@ -17,8 +17,8 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
-        working-directory: Tarea1-CC3S2
+        working-directory: CC3S2/Tarea1-CC3S2
 
       - name: Run tests
         run: pytest
-        working-directory: Tarea1-CC3S2
+        working-directory: CC3S2/Tarea1-CC3S2
