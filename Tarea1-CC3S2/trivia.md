@@ -63,7 +63,9 @@ El test es exitoso:
 ![](./assets/output_test_quiz.png)
 
 
-# Sprint 3: Mejora de la interfaz
+# Sprint 3: Pipeline CI/CD
+En este pipeline definimos que cada vez que se haga un push en las ramas develop y main, se va a ejecutar un job, primero se clona el código para luego trabajar con él, luego definimos e instalamos una versión de Python, instalamos las dependencias leyendo el requirments.txt en el directorio donde está en nuestro proyecto y por último se correrá los test con el comando pytest.
 
+![](./assets/pipeline.png)
 
 
