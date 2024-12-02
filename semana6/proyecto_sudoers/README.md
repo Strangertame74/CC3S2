@@ -14,6 +14,6 @@
     - templates/developers.j2
  ```
 6. Levantamos la máquina virtual.
-7. Nos conectamos como el usuario bender
+7. Nos conectamos como el usuario bender y verificamos que exista.
 
 
