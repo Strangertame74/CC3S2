@@ -1,0 +1,13 @@
+---
+- name: Instalar nginx
+  apt: 
+    name: 
+     - nginx
+    update-cache: yes
+
+- name: Generar certificado SSL autofirmado
+  openssl_certificate:
+    path: /etc/ssl/crt/ansible.com.crt
+    privatekey_path: /etc/ssl/private/ansible.com.pem
+    csr_path: /etc/ssl/csr/ansible.com.csr
+    provider: selfsigned
