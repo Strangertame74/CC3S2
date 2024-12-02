@@ -1,0 +1,28 @@
+---
+- name: Set timezone to America/Peru
+  timezone:
+    name: America/Lima
+
+- name: Crear usuario devuser
+  user: 
+    name: devuser
+    shell: /bin/bash
+    password: "{{ '12345'| password_hash('sha512') }}"
+
+- name: Actualizar e instalar paquetes
+  apt:
+    update_cache: yes
+    name:
+      - git
+    state: present
+
+- name: Crear grupo admin
+  group:
+    name: admin
+    state: present
+
+- name: Asignar 'devuser' al grupo 'Admin'
+  user:
+    name: devuser
+    groups: admin
+    append: yes
