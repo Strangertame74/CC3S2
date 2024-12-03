@@ -38,7 +38,7 @@
   notify:
     - Reiniciar Nginx
 
-- name: Crear enlace simbólico para habilitar el sitio por defecto
+- name: Crear enlace para habilitar el sitio por defecto
   file:
     src: /etc/nginx/sites-available/default
     dest: /etc/nginx/sites-enabled/default

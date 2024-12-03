@@ -26,5 +26,22 @@ end
 ```
 # Ejercicio 2: Implementación de servicios web con seguridad básica
 
+Para el ejercicio dos tenemos los archivos: 
+- site.yml (actualizado): Actualizado con vars (variables), handlers (manejador para el restart de nginx), importar el task para el ejercicio 2(main.yml)
+- ejercicio2/main.yml : Tasks para instalar nginx, generar certificado SSL autofirmado, configurar nginx para utilizar SSL, config SSL, config firewall UFW para https.
+- handlers/main.yml: Task para reiniciar gninx (con notify le decimos qué task agarrar)
+- templates/nginx_https.conf.j2:
+
+### Dentro de ejercicio2/main.yml:
+Tenemos el siguiente flujo:
+1. Instalar nginx
+2. Instalar las dependencias de openSSL
+3. Crear un directorio para el certificado SSL
+4. Crear una clave privada RSA
+5. Crear certificado SSL autofirmado
+6. Configurar Nginx para HTTPS
+7. Crear enlace para habilitar el sitio por defecto
+8. Habilitar UFW para permitir tráfico HTTPS
+9. Probar configuración de Nginx
 
 

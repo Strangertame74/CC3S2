@@ -1,12 +1,20 @@
 server {
-    listen 443 ssl;
+    listen 80;
     server_name {{ server_name }};
+    
+    # Redirigir todas las solicitudes HTTP a HTTPS
+    return 301 https://$host$request_uri;
+}
 
-    ssl_certificate {{ ssl_certificate_path }};
+server {
+    listen              443 ssl;
+    server_name         {{ server_name }};
+
+    ssl_certificate     {{ ssl_certificate_path }};
     ssl_certificate_key {{ ssl_certificate_key_path }};
 
     location / {
         root /var/www/html;
-        index index.html;
+        index index.html index.htm index.nginx-debian.html;
     }
 }
