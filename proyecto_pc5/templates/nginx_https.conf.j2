@@ -1,0 +1,12 @@
+server {
+    listen 443 ssl;
+    server_name {{ server_name }};
+
+    ssl_certificate {{ ssl_certificate_path }};
+    ssl_certificate_key {{ ssl_certificate_key_path }};
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}

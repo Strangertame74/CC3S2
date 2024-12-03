@@ -1,4 +1,16 @@
 ---
+- name: Actualizar e instalar paquetes
+  apt:
+    update_cache: yes
+
+- name: Instalar parche de seguridad
+  apt:
+    upgrade: yes
+
+- name: Realizar actualización del sistema
+  apt:
+    upgrade: dist
+    
 - name: Set timezone to America/Peru
   timezone:
     name: America/Lima
@@ -8,13 +20,6 @@
     name: devuser
     shell: /bin/bash
     password: "{{ '12345'| password_hash('sha512') }}"
-
-- name: Actualizar e instalar paquetes
-  apt:
-    update_cache: yes
-    name:
-      - git
-    state: present
 
 - name: Crear grupo admin
   group:

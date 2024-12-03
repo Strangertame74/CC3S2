@@ -5,9 +5,50 @@
      - nginx
     update-cache: yes
 
-- name: Generar certificado SSL autofirmado
-  openssl_certificate:
-    path: /etc/ssl/crt/ansible.com.crt
-    privatekey_path: /etc/ssl/private/ansible.com.pem
-    csr_path: /etc/ssl/csr/ansible.com.csr
+- name: Instalar dependencias de OpenSSL
+  apt:
+    name:
+      - openssl
+      - libssl-dev
+    state: present
+
+- name: Crear directorio para certificados SSL
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: '0755'
+
+- name: Crear clave privada RSA
+  community.crypto.openssl_privatekey:
+    path: /etc/nginx/ssl/certificate.key
+    size: 4096
+    type: RSA
+
+- name: Crear certificado SSL autofirmado
+  community.crypto.x509_certificate:
+    path: /etc/nginx/ssl/certificate.pem
+    privatekey_path: /etc/nginx/ssl/certificate.key
     provider: selfsigned
+    selfsigned_digest: sha256
+
+- name: Configurar Nginx para HTTPS
+  template:
+    src: templates/nginx_https.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify:
+    - Reiniciar Nginx
+
+- name: Crear enlace simbólico para habilitar el sitio por defecto
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+
+- name: Habilitar UFW para permitir tráfico HTTPS
+  ufw:
+    rule: allow
+    port: 443
+    proto: tcp
+
+- name: Probar configuración de Nginx
+  command: nginx -t
