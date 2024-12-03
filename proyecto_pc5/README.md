@@ -1,11 +1,26 @@
-En esta carpeta del repositorio CC3S2 se encuentra la resolución de los ejercicios para la PC5, que es una pequeña parte de todo un proyecto que incluye a la PC3, PC4 y PC5.
+En esta carpeta del repositorio CC3S2, llamada proyecto_pc5, se encuentra la resolución de los ejercicios para la PC5, que es una pequeña parte de todo un proyecto que incluye a la PC3, PC4 y PC5.
 
+----
+### Requisitos 
+----
 Requisitos previos para poder correr los archivos:
 - Tener instalado Vagrant
 - Tener instalado Ansible
 - Tener instalado Virtualbox
 
+### Levantar la VM
+----
 Si queremos levantar las vm debemos ubicarnos en el directorio ```proyecto_pc/vagrant``` y utilizar el comando ```vagrant up```
+
+### Contenido
+-----
+Este README.md contendrá el resumen de los pasos de cada ejercicio.
+
+### Documentación adicional
+----
+Existe un archivo markdown llamado ```documentacion.md```, ubicado en ```docs/``` donde están las capturas de pantalla con los resultados importantes de cada ejercicio e información adicional.
+
+-----
 
 # Ejercicio 1: Configuración básica del sistema
 Para este ejercicio se creo un Vagrantfile con vagrant init ubuntu/focal64 para tener una vm con el sistema operativo deseado. También pedían una ip estática, así que en vez de dhcp se puso un ip estático y se puso en vb.memory el valor de 2048 para usar 2gb de ram. Por último se creó el playbook de ansible llamado site.yml y se importó las tareas del ejercicio1 que está en main.yml.
@@ -30,7 +45,7 @@ Para el ejercicio dos tenemos los archivos:
 - site.yml (actualizado): Actualizado con vars (variables), handlers (manejador para el restart de nginx), importar el task para el ejercicio 2(main.yml)
 - ejercicio2/main.yml : Tasks para instalar nginx, generar certificado SSL autofirmado, configurar nginx para utilizar SSL, config SSL, config firewall UFW para https.
 - handlers/main.yml: Task para reiniciar gninx (con notify le decimos qué task agarrar)
-- templates/nginx_https.conf.j2:
+- templates/nginx_https.conf.j2: Configuración de Nginx para HTTPS.
 
 ### Dentro de ejercicio2/main.yml:
 Tenemos el siguiente flujo:
@@ -43,5 +58,9 @@ Tenemos el siguiente flujo:
 7. Crear enlace para habilitar el sitio por defecto
 8. Habilitar UFW para permitir tráfico HTTPS
 9. Probar configuración de Nginx
+
+### Dentro de templates/nginx_https.conf.j2
+Tenemos la configuración configuración de Nginx para habilitar HTTPS en un servidor web.
+
 
 
