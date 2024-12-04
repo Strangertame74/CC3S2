@@ -1,11 +1,13 @@
 [Unit]
-Description=Prometheus Monitoring System
+Description=Prometheus Monitoring
 After=network.target
 
 [Service]
 User=prometheus
-Group=prometheus
-ExecStart=/opt/prometheus/prometheus --config.file=/opt/prometheus/prometheus.yml
+ExecStart=/etc/prometheus/prometheus-2.44.0.linux-amd64/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/var/lib/prometheus \
+  --web.listen-address=:9090
 Restart=always
 
 [Install]

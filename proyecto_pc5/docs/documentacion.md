@@ -53,3 +53,10 @@ Con el comanod ```curl -k https://localhost``` hacemos una solicitud a alguno de
 
 ![](./assets/13.png)
 
+# Ejercicio 4
+Verificando que grafana y prometheus están activos y corriendo.
+![](./assets/14.png)
+
+Hacemos una petición al localhost:9090/metrics para ver si el servidor nos da métricas:
+![](./assets/15.png)
+

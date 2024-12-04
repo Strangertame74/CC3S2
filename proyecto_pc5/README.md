@@ -95,17 +95,33 @@ Para este ejercicio 4, los siguientes archivos fueron añadidos o actualizados:
 - templates/alerts.yml.j2:
 - ejercicio4/main.yml: Aquí estarán los tasks para el ejercicio 4.
 - handlers/main.yml (actualizado): Reiniciar prometheus.
+- templates/app.py: Métricas para grafana y prometheus
 
 ### Dentro de ejercicio2/main.yml:
 Tenemos el siguiente flujo:
-1. Instalar dependencias de python
-2. Instalar Flask y Gunicorn
-3. Crear un ddirectorio para la aplicación
-4. Crear la aplicación de Flask
-5. Crear servicios systemd para gunicorn
-6. Iniciar y habilitar servicios Gunicorn
-7. Configurar archivo de Nginx para balanceo de carga
-8. Habilitar configuración de Nginx
+1. Descargar binarios de Prometheus desde GitHub
+2. Crear directorio para Prometheus
+2. Descargar Prometheus
+3. Extraer Prometheus
+4. Crear usuario para Prometheus
+5. Configurar Prometheus
+6. Configurar alertas en Prometheus
+7. Crear directorio de almacenamiento para Prometheus
+8. Dar permisos a Prometheus para el directorio de almacenamiento
+9. Crear servicio para Prometheus
+10. Descargar Node Exporter
+11. Extraer Node Exporter
+12. Eliminar el directorio de Node Exporter si existe
+13. Mover Node Exporter
+14. Crear servicio para Node Exporter
+15. Iniciar y habilitar Prometheus
+16. Iniciar y habilitar Node Exporter
+17. Configurar Prometheus
+18. Agregar clave GPG de Grafana
+19. Agregar repositorio de Grafana
+20. Actualizar la caché de paquetes
+21. Instalar Grafana
+22. Habilitar e iniciar el servicio de Grafana
 
 
 

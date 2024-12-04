@@ -1,36 +1,64 @@
-- name: Eliminar carpeta de Prometheus si existe
-  file:
-    path: /opt/prometheus
-    state: absent
-
-- name: Descargar Prometheus
-  get_url:
-    url: https://github.com/prometheus/prometheus/releases/download/v2.47.0/prometheus-2.47.0.linux-amd64.tar.gz
+---
+- name: Descargar binarios de Prometheus desde GitHub
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v2.44.0/prometheus-2.44.0.linux-amd64.tar.gz"
     dest: /tmp/prometheus.tar.gz
 
+- name: Crear directorio para Prometheus
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    mode: '0755'
+
 - name: Extraer Prometheus
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/prometheus.tar.gz
-    dest: /opt
-    remote_src: true
+    dest: /etc/prometheus
+    remote_src: yes
 
 - name: Crear usuario para Prometheus
   user:
     name: prometheus
-    system: true
+    shell: /usr/sbin/nologin
 
-- name: Cambiar permisos de Prometheus
-  file:
-    path: /opt/prometheus
-    state: directory
+- name: Configurar Prometheus
+  ansible.builtin.copy:
+    src: templates/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
     owner: prometheus
     group: prometheus
-    recurse: true
+    mode: '0644'
+  notify:
+    - Reiniciar Prometheus
 
-- name: Crear servicio de Prometheus
-  template:
+- name: Configurar alertas en Prometheus
+  ansible.builtin.copy:
+    src: templates/alerts.yml.j2
+    dest: /etc/prometheus/alert.rules
+  notify:
+    - Reiniciar Prometheus
+
+- name: Crear directorio de almacenamiento para Prometheus
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    state: directory
+    mode: '0755'
+  become: yes
+
+- name: Dar permisos a Prometheus para el directorio de almacenamiento
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+  become: yes
+
+- name: Crear servicio para Prometheus
+  ansible.builtin.copy:
     src: templates/prometheus.service.j2
-    dest: /etc/systemd/system/prometheus.service
+    dest: /etc/systemd/system/prometheus.service          
+  notify:
+    - Reiniciar Prometheus
 
 - name: Descargar Node Exporter
   get_url:
@@ -42,6 +70,11 @@
     src: /tmp/node_exporter.tar.gz
     dest: /opt
     remote_src: true
+
+- name: Eliminar el directorio de Node Exporter si existe
+  file:
+    path: /opt/node_exporter
+    state: absent
 
 - name: Mover Node Exporter
   command: mv /opt/node_exporter-1.6.0.linux-amd64 /opt/node_exporter
@@ -63,46 +96,27 @@
     state: started
     enabled: true
 
-- name: Configurar Prometheus
-  template:
-    src: templates/prometheus.yml.j2
-    dest: /opt/prometheus/prometheus.yml
-  notify:
-    - Reiniciar Prometheus
+- name: Agregar clave GPG de Grafana
+  apt_key:
+    url: "https://packages.grafana.com/gpg.key"
+    state: present
 
-- name: Descargar e instalar Grafana
-  shell: |
-    wget https://dl.grafana.com/enterprise/release/grafana-enterprise-10.1.0.linux-amd64.tar.gz -O /tmp/grafana.tar.gz
-    tar -xvf /tmp/grafana.tar.gz -C /opt
-    mv /opt/grafana-enterprise-10.1.0 /opt/grafana
+- name: Agregar repositorio de Grafana
+  apt_repository:
+    repo: "deb https://packages.grafana.com/oss/deb stable main"
+    state: present
 
-- name: Crear usuario para Grafana
-  user:
+- name: Actualizar la caché de paquetes
+  apt:
+    update_cache: yes
+
+- name: Instalar Grafana
+  apt:
     name: grafana
-    system: true
+    state: present
 
-- name: Cambiar permisos de Grafana
-  file:
-    path: /opt/grafana
-    state: directory
-    owner: grafana
-    group: grafana
-    recurse: true
-
-- name: Crear servicio de Grafana
-  template:
-    src: templates/grafana.service.j2
-    dest: /etc/systemd/system/grafana.service
-
-- name: Iniciar y habilitar Grafana
-  systemd:
-    name: grafana
+- name: Habilitar e iniciar el servicio de Grafana
+  ansible.builtin.systemd:
+    name: grafana-server
     state: started
-    enabled: true
-
-- name: Configurar alertas de Prometheus
-  template:
-    src: templates/alerts.yml.j2
-    dest: /opt/prometheus/alerts.yml
-  notify:
-    - Reiniciar Prometheus
+    enabled: yes

@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", ip: "192.168.56.2" # dando una ip estática en vez de dhcp
   config.vm.provider "virtualbox" do |vb| #Configuramos como proveedor a virtualbox
     vb.memory = "2048" # Usará 2gb de ram
-    vb.name = "vm_1" # Nombre de la vm
+    vb.name = "vm_2" # Nombre de la vm
   end
   config.vm.provision "ansible" do |ansible| #Configuramos ansible como provisionador
     ansible.playbook = "../site.yml" #leeremos el site.yml un playbook de ansible que crearemos

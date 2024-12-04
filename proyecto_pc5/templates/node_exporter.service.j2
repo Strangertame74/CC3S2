@@ -3,9 +3,10 @@ Description=Node Exporter
 After=network.target
 
 [Service]
-User=prometheus
-Group=prometheus
-ExecStart=/opt/node_exporter/node_exporter
+Type=simple
+ExecStart=/opt/node_exporter/node_exporter-1.6.0.linux-amd64/node_exporter
+Restart=always
+User=root
 
 [Install]
 WantedBy=multi-user.target
