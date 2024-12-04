@@ -7,3 +7,9 @@
 - name: Recargar systemd
   command: systemctl daemon-reload
   become: yes
+
+- name: Reiniciar Prometheus
+  become: true
+  systemd:
+    name: prometheus
+    state: restarted

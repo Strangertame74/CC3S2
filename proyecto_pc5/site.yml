@@ -8,6 +8,7 @@
     - import_tasks: ansible/ejercicio1/main.yml
     - import_tasks: ansible/ejercicio2/main.yml
     - import_tasks: ansible/ejercicio3/main.yml
+    - import_tasks: ansible/ejercicio4/main.yml
   vars:
     # variables del ejercicio 1 y 2
     server_name: localhost
@@ -15,7 +16,7 @@
     ssl_certificate_key_path: /etc/nginx/ssl/certificate.key
     # variables del ejercicio 3
     app_dir: /var/www/flask_app
-    nginx_config_path: /etc/nginx/sites-available/flask_app
+    nginx_config_path: /etc/nginx/sites-available/https_config
     ports: [8000, 8001, 8002]
     gunicorn_path: /usr/local/bin/gunicorn
   handlers:

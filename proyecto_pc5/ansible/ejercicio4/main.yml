@@ -1,0 +1,108 @@
+- name: Eliminar carpeta de Prometheus si existe
+  file:
+    path: /opt/prometheus
+    state: absent
+
+- name: Descargar Prometheus
+  get_url:
+    url: https://github.com/prometheus/prometheus/releases/download/v2.47.0/prometheus-2.47.0.linux-amd64.tar.gz
+    dest: /tmp/prometheus.tar.gz
+
+- name: Extraer Prometheus
+  unarchive:
+    src: /tmp/prometheus.tar.gz
+    dest: /opt
+    remote_src: true
+
+- name: Crear usuario para Prometheus
+  user:
+    name: prometheus
+    system: true
+
+- name: Cambiar permisos de Prometheus
+  file:
+    path: /opt/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    recurse: true
+
+- name: Crear servicio de Prometheus
+  template:
+    src: templates/prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+
+- name: Descargar Node Exporter
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.6.0/node_exporter-1.6.0.linux-amd64.tar.gz
+    dest: /tmp/node_exporter.tar.gz
+
+- name: Extraer Node Exporter
+  unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /opt
+    remote_src: true
+
+- name: Mover Node Exporter
+  command: mv /opt/node_exporter-1.6.0.linux-amd64 /opt/node_exporter
+
+- name: Crear servicio para Node Exporter
+  template:
+    src: templates/node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+
+- name: Iniciar y habilitar Prometheus
+  systemd:
+    name: prometheus
+    state: started
+    enabled: true
+
+- name: Iniciar y habilitar Node Exporter
+  systemd:
+    name: node_exporter
+    state: started
+    enabled: true
+
+- name: Configurar Prometheus
+  template:
+    src: templates/prometheus.yml.j2
+    dest: /opt/prometheus/prometheus.yml
+  notify:
+    - Reiniciar Prometheus
+
+- name: Descargar e instalar Grafana
+  shell: |
+    wget https://dl.grafana.com/enterprise/release/grafana-enterprise-10.1.0.linux-amd64.tar.gz -O /tmp/grafana.tar.gz
+    tar -xvf /tmp/grafana.tar.gz -C /opt
+    mv /opt/grafana-enterprise-10.1.0 /opt/grafana
+
+- name: Crear usuario para Grafana
+  user:
+    name: grafana
+    system: true
+
+- name: Cambiar permisos de Grafana
+  file:
+    path: /opt/grafana
+    state: directory
+    owner: grafana
+    group: grafana
+    recurse: true
+
+- name: Crear servicio de Grafana
+  template:
+    src: templates/grafana.service.j2
+    dest: /etc/systemd/system/grafana.service
+
+- name: Iniciar y habilitar Grafana
+  systemd:
+    name: grafana
+    state: started
+    enabled: true
+
+- name: Configurar alertas de Prometheus
+  template:
+    src: templates/alerts.yml.j2
+    dest: /opt/prometheus/alerts.yml
+  notify:
+    - Reiniciar Prometheus

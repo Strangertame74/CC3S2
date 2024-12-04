@@ -34,14 +34,14 @@
 - name: Configurar Nginx para HTTPS
   template:
     src: templates/nginx_https.conf.j2
-    dest: /etc/nginx/sites-available/default
+    dest: "{{ nginx_config_path }}"
   notify:
     - Reiniciar Nginx
 
-- name: Crear enlace para habilitar el sitio por defecto
+- name: Crear enlace para habilitar el sitio HTTPS
   file:
-    src: /etc/nginx/sites-available/default
-    dest: /etc/nginx/sites-enabled/default
+    src: "{{ nginx_config_path }}"
+    dest: /etc/nginx/sites-enabled/https_config
     state: link
 
 - name: Habilitar UFW para permitir tráfico HTTPS

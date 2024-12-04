@@ -67,10 +67,11 @@ Tenemos la configuración configuración de Nginx para habilitar HTTPS en un ser
 Para el ejercicio 3, los siguientes archivos fueron añadidos o actualizados:
 - site.yml (actualizado): Se importó los task del ejercicio 3, además de las variables, que están señaladas y separadas por un comentario(se pueden ver dentro del archivo).
 - templates/nginx_https.conf.j2 (actualizado): Escalando la configuración del ejercicio 2, aquí se cambió en location los archivos que podía buscar(index.html y index.nginx-debian.html) y ahora que vamos a trabajar con una aplicación de flask, tenemos el proxy_pass el cuál va a redirigir las solicitudes que lleguen a alguno de los servidores de los bloques que hemos definido (A esto se le llama balancear).
-- templates/gunicorn.service.j2: Aquí irá la configuración de gunicorn, es un archivo de unidad de sysmtemd, con esto gestionaremos el servicio de gunicorn.
+- templates/gunicorn.service.j2: Aquí irá la configuración de gunicorn, es un archivo de unidad de sysmtemd, con esto gestionaremos este servicio.
 - ejercicio3/main.yml: Aquí irán los tasks para instalar las dependencias de python, instalar flask y unicorn, y el resto de tareas para este ejercicio.
-- templates/nginx_load_balancer.conf.j2: En este archivo se especifican los servidores gunicorn que van a recibir la solicitud del nginx en el puerto 443.
+- templates/nginx_load_balancer.conf.j2: En este archivo se especifican los servidores gunicorn que van a recibir la solicitud del nginx en el puerto 443 (Luego en otro commit lo cambié porque había un conflicto con el ejercicio 2 y no me permitía seguir, y al final uní dos templates y borré este directorio).
 - templates/app.py: Pequeña app creada con flask para que se copie a la VM.
+- handlers/main.yml(actualizado): Se agregó un manejador para recargar systemd.
 
 ### Dentro de ejercicio2/main.yml:
 Tenemos el siguiente flujo:
@@ -83,6 +84,28 @@ Tenemos el siguiente flujo:
 7. Configurar archivo de Nginx para balanceo de carga
 8. Habilitar configuración de Nginx
 
+# Ejercicio 4: Monitoreo y alertas
+
+Para este ejercicio 4, los siguientes archivos fueron añadidos o actualizados:
+- site.yml(actualizado): Se importó el task del ejercicio 4.
+- templates/prometheus.service.j2: Archivo para gestionar el servicio de prometheus
+- templates/prometheus.yml.j2:
+- templates/node_exporter.service.j2:
+- templates/grafana.service.j2: Archivo para gestionar el servicio de grafana
+- templates/alerts.yml.j2:
+- ejercicio4/main.yml: Aquí estarán los tasks para el ejercicio 4.
+- handlers/main.yml (actualizado): Reiniciar prometheus.
+
+### Dentro de ejercicio2/main.yml:
+Tenemos el siguiente flujo:
+1. Instalar dependencias de python
+2. Instalar Flask y Gunicorn
+3. Crear un ddirectorio para la aplicación
+4. Crear la aplicación de Flask
+5. Crear servicios systemd para gunicorn
+6. Iniciar y habilitar servicios Gunicorn
+7. Configurar archivo de Nginx para balanceo de carga
+8. Habilitar configuración de Nginx
 
 
 

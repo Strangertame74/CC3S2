@@ -8,7 +8,7 @@
     state: present
     update_cache: yes
 
-- name: Instalar Flask y Gunicorn globalmente
+- name: Instalar Flask y Gunicorn
   pip:
     name:
       - flask
@@ -46,17 +46,10 @@
     enabled: true
   with_items: "{{ ports }}"
 
-- name: Configurar archivo de Nginx para balanceo de carga
-  template:
-    src: templates/nginx_load_balancer.conf.j2
-    dest: "{{ nginx_config_path }}"
-  notify:
-    - Reiniciar Nginx
-
 - name: Habilitar configuración de Nginx
   file:
     src: "{{ nginx_config_path }}"
-    dest: /etc/nginx/sites-enabled/flask_app
+    dest: /etc/nginx/sites-enabled/https_config
     state: link
 
 
