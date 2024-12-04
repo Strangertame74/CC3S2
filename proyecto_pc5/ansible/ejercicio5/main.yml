@@ -1,0 +1,156 @@
+- name: Agregar el repositorio de PostgreSQL
+  ansible.builtin.apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main"
+    state: present
+
+- name: Instalar la clave GPG del repositorio de PostgreSQL
+  ansible.builtin.apt_key:
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
+
+- name: Actualizar el caché de APT
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Instalar PostgreSQL y sus dependencias
+  ansible.builtin.apt:
+    pkg: "{{ item }}"
+    update_cache: yes
+    state: present
+  loop:
+    - postgresql-{{ postgresql_version }}
+    - postgresql-client-{{ postgresql_version }}
+    - postgresql-contrib-{{ postgresql_version }}
+    - libpq-dev
+  tags: postgres
+
+- name: Fijar la versión de las dependencias de PostgreSQL (libpq-dev)
+  ansible.builtin.shell:
+    cmd: echo "libpq-dev hold" | dpkg --set-selections
+  tags: postgres
+
+- name: Configurar PostgreSQL. Establecer listen_addresses
+  ansible.builtin.lineinfile:
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp: "listen_addresses ="
+    line: "listen_addresses = '*'"
+    state: present
+  notify: restart postgresql
+  tags: postgres
+
+- name: Configurar PostgreSQL. Establecer max_connections
+  ansible.builtin.lineinfile:
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp: "max_connections ="
+    line: "max_connections = 1000"
+    state: present
+  notify: restart postgresql
+  tags: postgres
+
+- name: Configurar PostgreSQL. Deshabilitar SSL
+  ansible.builtin.lineinfile:
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp: "ssl ="
+    line: "ssl = false"
+    state: present
+  notify: restart postgresql
+  tags: postgres
+
+- name: Configurar PostgreSQL. Habilitar autovacuum
+  ansible.builtin.lineinfile:
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp: "autovacuum ="
+    line: "autovacuum = on"
+    state: present
+  notify: restart postgresql
+  tags: postgres
+
+- name: Configurar PostgreSQL. Establecer hosts en pg_hba.conf
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    backup: yes
+  notify: restart postgresql
+  tags: postgres
+
+- name: Instalar psycopg2
+  ansible.builtin.pip:
+    name: psycopg2
+  tags: postgres
+
+- name: Crear la base de datos PostgreSQL
+  ansible.builtin.postgresql_db:
+    name: "{{ postgresql_db_name }}"
+  become_user: postgres
+  tags: postgres
+
+- name: Crear usuario de base de datos y otorgar acceso
+  ansible.builtin.postgresql_user:
+    db: "{{ postgresql_db_name }}"
+    user: "{{ postgresql_db_user }}"
+    password: "{{ postgresql_db_user_password }}"
+  become_user: postgres
+  tags: postgres
+
+- name: Configurar PostgreSQL como primario
+  ansible.builtin.copy:
+    src: templates/postgresql-primary.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    owner: postgres
+    mode: '0644'
+  when: inventory_hostname == "host_primario"  # Se utiliza el valor del host primario
+
+- name: Configurar PostgreSQL como réplica
+  ansible.builtin.copy:
+    src: templates/postgresql-replica.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    owner: postgres
+    mode: '0644'
+  when: inventory_hostname == "host_replicante"  # Se utiliza el valor del host réplica
+
+- name: Reiniciar PostgreSQL
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+  tags: postgres
+
+- name: Crear directorio de backups
+  ansible.builtin.file:
+    path: /var/backups/postgresql
+    state: directory
+    owner: postgres
+    mode: '0755'
+
+- name: Copiar script de backup
+  ansible.builtin.copy:
+    src: scripts/pg_backup.sh
+    dest: /usr/local/bin/pg_backup.sh
+    owner: postgres
+    mode: '0755'
+
+- name: Configurar tarea cron para backups
+  ansible.builtin.cron:
+    name: "PostgreSQL Backup"
+    user: postgres
+    minute: "0"
+    hour: "2"
+    job: "/usr/local/bin/pg_backup.sh"
+
+- name: Instalar Keepalived
+  ansible.builtin.apt:
+    name: keepalived
+    state: present
+
+- name: Configurar Keepalived
+  ansible.builtin.copy:
+    src: templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    mode: '0644'
+
+- name: Habilitar y reiniciar Keepalived
+  ansible.builtin.service:
+    name: keepalived
+    state: restarted
+    enabled: true

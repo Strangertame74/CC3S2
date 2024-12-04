@@ -73,7 +73,7 @@ Para el ejercicio 3, los siguientes archivos fueron añadidos o actualizados:
 - templates/app.py: Pequeña app creada con flask para que se copie a la VM.
 - handlers/main.yml(actualizado): Se agregó un manejador para recargar systemd.
 
-### Dentro de ejercicio2/main.yml:
+### Dentro de ejercicio3/main.yml:
 Tenemos el siguiente flujo:
 1. Instalar dependencias de python
 2. Instalar Flask y Gunicorn
@@ -89,15 +89,15 @@ Tenemos el siguiente flujo:
 Para este ejercicio 4, los siguientes archivos fueron añadidos o actualizados:
 - site.yml(actualizado): Se importó el task del ejercicio 4.
 - templates/prometheus.service.j2: Archivo para gestionar el servicio de prometheus
-- templates/prometheus.yml.j2:
-- templates/node_exporter.service.j2:
+- templates/prometheus.yml.j2: Configuración de prometheus
+- templates/node_exporter.service.j2: Configuración de node_exporter
 - templates/grafana.service.j2: Archivo para gestionar el servicio de grafana
-- templates/alerts.yml.j2:
+- templates/alerts.yml.j2: Aquí estaba la configuración para las alertas
 - ejercicio4/main.yml: Aquí estarán los tasks para el ejercicio 4.
 - handlers/main.yml (actualizado): Reiniciar prometheus.
 - templates/app.py: Métricas para grafana y prometheus
 
-### Dentro de ejercicio2/main.yml:
+### Dentro de ejercicio4/main.yml:
 Tenemos el siguiente flujo:
 1. Descargar binarios de Prometheus desde GitHub
 2. Crear directorio para Prometheus
@@ -123,5 +123,38 @@ Tenemos el siguiente flujo:
 21. Instalar Grafana
 22. Habilitar e iniciar el servicio de Grafana
 
+# Ejercicio 5: Implementación de alta disponibilidad y recuperación de desastres:
 
+Para este ejercicio 5, los siguientes archivos fueron añadidos o actualizados:
+- site.yml(actualizado): Se importó el task del ejercicio 5.
+- templates/postgresql-primary.conf.j2: Config para servidor primario
+- templates/postgresql-replica.conf.j2: Config para el entorno de replicaión
+- templates/pg_backup.sh: Backup de una base de datos postgre.
+
+### Dentro de ejercicio5/main.yml:
+Tenemos el siguiente flujo:
+1. Agregar el repositorio de PostgreSQL
+2. Instalar la clave GPG del repositorio de PostgreSQL
+3. Actualizar el caché de APT
+4. Instalar PostgreSQL y sus dependencias
+5. Fijar la versión de las dependencias de PostgreSQL (libpq-dev)
+6. Configurar PostgreSQL. Establecer listen_addresses
+7. Configurar PostgreSQL. Establecer max_connections
+8. Configurar PostgreSQL. Deshabilitar SSL
+9. Configurar PostgreSQL. Habilitar autovacuum
+10. Configurar PostgreSQL. Establecer hosts en pg_hba.conf
+11. Instalar psycopg2
+12. Crear la base de datos PostgreSQL
+13. Crear usuario de base de datos y otorgar acceso
+14. Configurar PostgreSQL como primario
+15. Configurar PostgreSQL como réplica
+16. Reiniciar PostgreSQL17. 
+17. Crear directorio de backups
+18. Copiar script de backup
+19. Configurar tarea cron para backups
+20. Instalar Keepalived
+21. Configurar Keepalived
+22. Habilitar y reiniciar Keepalived
+
+Un problema que tuve para este ejercicio fue que después de levantar nuevamente con vagrant up, el postgresql no se podía instalar, al parece por la url.
 

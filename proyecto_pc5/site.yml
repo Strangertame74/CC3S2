@@ -9,6 +9,8 @@
     - import_tasks: ansible/ejercicio2/main.yml
     - import_tasks: ansible/ejercicio3/main.yml
     - import_tasks: ansible/ejercicio4/main.yml
+    #- import_tasks: ansible/ejercicio5/main.yml
+    
   vars:
     # variables del ejercicio 1 y 2
     server_name: localhost
@@ -19,5 +21,12 @@
     nginx_config_path: /etc/nginx/sites-available/https_config
     ports: [8000, 8001, 8002]
     gunicorn_path: /usr/local/bin/gunicorn
+    # variables del ejercicio 5
+    postgresql_version: "13"  
+    primary_host: "192.168.1.10" 
+    replica_host: "192.168.1.11"
+    postgresql_db_name: "my_db" 
+    postgresql_db_user: "user_db"
+    postgresql_db_user_password: "contraseña" 
   handlers:
     - import_tasks: handlers/main.yml

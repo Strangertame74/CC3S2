@@ -2,10 +2,9 @@ groups:
   - name: example_alert
     rules:
       - alert: HighCPUUsage
-        expr: node_cpu_seconds_total > 0.8
-        for: 1m
+        expr: avg(rate(node_cpu_seconds_total[5m]))> 0.8
+        for: 60s
         labels:
-          severity: critical
+          severity: warning
         annotations:
           summary: "High CPU usage detected"
-          description: "The CPU usage is over 90% for 1 minute"
