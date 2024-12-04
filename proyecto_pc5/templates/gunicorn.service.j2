@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve Flask App
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory={{ app_dir }}
+ExecStart={{ gunicorn_path }} --workers 3 --bind 0.0.0.0:{{ item }} app:app
+
+[Install]
+WantedBy=multi-user.target

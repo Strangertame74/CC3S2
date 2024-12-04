@@ -31,7 +31,7 @@ location / {
     }
 ```
 
-Sin tener un index.html, pero al agregar el archivo que sí teníamos, osea indez.nginx-debian.html, ahora sí salió y pudo servir bien.
+Sin tener un index.html, pero al agregar el archivo que sí teníamos, osea index.nginx-debian.html, ahora sí salió y pudo servir bien.
 
 ```
 index index.html index.htm index.nginx-debian.html;
@@ -39,3 +39,17 @@ index index.html index.htm index.nginx-debian.html;
 
 Al usar de nuevo el comando ```curl -k https://localhost``` :
 ![](./assets/8.png)
+
+# Ejercicio 3
+Verificamos que nginx esté activo y corriendo:
+![](./assets/9.png)
+
+Verificamos si los serivicios están activos, para el puerto 8000, 8001 y 8002.
+![](./assets/10.png)
+![](./assets/11.png)
+![](./assets/12.png)
+
+Con el comanod ```curl -k https://localhost``` hacemos una solicitud a alguno de los servidores y vemos que recibimos la respuesta(La pequeña aplicación que creamos):
+
+![](./assets/13.png)
+

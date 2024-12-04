@@ -41,7 +41,7 @@ end
 ```
 # Ejercicio 2: Implementación de servicios web con seguridad básica
 
-Para el ejercicio dos tenemos los archivos: 
+Para el ejercicio 2 tenemos los archivos: 
 - site.yml (actualizado): Actualizado con vars (variables), handlers (manejador para el restart de nginx), importar el task para el ejercicio 2(main.yml)
 - ejercicio2/main.yml : Tasks para instalar nginx, generar certificado SSL autofirmado, configurar nginx para utilizar SSL, config SSL, config firewall UFW para https.
 - handlers/main.yml: Task para reiniciar gninx (con notify le decimos qué task agarrar)
@@ -61,6 +61,28 @@ Tenemos el siguiente flujo:
 
 ### Dentro de templates/nginx_https.conf.j2
 Tenemos la configuración configuración de Nginx para habilitar HTTPS en un servidor web.
+
+# Ejercicio 3: Despliegue de aplicación web con balanceador de carga
+
+Para el ejercicio 3, los siguientes archivos fueron añadidos o actualizados:
+- site.yml (actualizado): Se importó los task del ejercicio 3, además de las variables, que están señaladas y separadas por un comentario(se pueden ver dentro del archivo).
+- templates/nginx_https.conf.j2 (actualizado): Escalando la configuración del ejercicio 2, aquí se cambió en location los archivos que podía buscar(index.html y index.nginx-debian.html) y ahora que vamos a trabajar con una aplicación de flask, tenemos el proxy_pass el cuál va a redirigir las solicitudes que lleguen a alguno de los servidores de los bloques que hemos definido (A esto se le llama balancear).
+- templates/gunicorn.service.j2: Aquí irá la configuración de gunicorn, es un archivo de unidad de sysmtemd, con esto gestionaremos el servicio de gunicorn.
+- ejercicio3/main.yml: Aquí irán los tasks para instalar las dependencias de python, instalar flask y unicorn, y el resto de tareas para este ejercicio.
+- templates/nginx_load_balancer.conf.j2: En este archivo se especifican los servidores gunicorn que van a recibir la solicitud del nginx en el puerto 443.
+- templates/app.py: Pequeña app creada con flask para que se copie a la VM.
+
+### Dentro de ejercicio2/main.yml:
+Tenemos el siguiente flujo:
+1. Instalar dependencias de python
+2. Instalar Flask y Gunicorn
+3. Crear un ddirectorio para la aplicación
+4. Crear la aplicación de Flask
+5. Crear servicios systemd para gunicorn
+6. Iniciar y habilitar servicios Gunicorn
+7. Configurar archivo de Nginx para balanceo de carga
+8. Habilitar configuración de Nginx
+
 
 
 

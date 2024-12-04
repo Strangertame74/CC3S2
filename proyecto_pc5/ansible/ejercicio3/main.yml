@@ -1,0 +1,62 @@
+---
+- name: Instalar Python
+  apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-setuptools
+    state: present
+    update_cache: yes
+
+- name: Instalar Flask y Gunicorn globalmente
+  pip:
+    name:
+      - flask
+      - gunicorn
+    state: present
+
+- name: Crear directorio para la aplicación
+  file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Copiar la aplicación Flask
+  copy:
+    src: templates/app.py
+    dest: "{{ app_dir }}/app.py"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Crear servicios systemd para Gunicorn
+  template:
+    src: templates/gunicorn.service.j2
+    dest: "/etc/systemd/system/gunicorn_{{ item }}.service"
+  with_items: "{{ ports }}"
+  notify:
+    - Recargar systemd
+
+- name: Iniciar y habilitar servicios Gunicorn
+  systemd:
+    name: "gunicorn_{{ item }}"
+    state: started
+    enabled: true
+  with_items: "{{ ports }}"
+
+- name: Configurar archivo de Nginx para balanceo de carga
+  template:
+    src: templates/nginx_load_balancer.conf.j2
+    dest: "{{ nginx_config_path }}"
+  notify:
+    - Reiniciar Nginx
+
+- name: Habilitar configuración de Nginx
+  file:
+    src: "{{ nginx_config_path }}"
+    dest: /etc/nginx/sites-enabled/flask_app
+    state: link
+
+
