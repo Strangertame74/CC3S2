@@ -1,0 +1,62 @@
+- name: Instalar Docker
+  ansible.builtin.apt:
+    name: docker.io
+    state: present
+    update_cache: yes
+
+- name: Asegurar que Docker esté habilitado y en ejecución
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Construir la imagen de Docker para la aplicación
+  ansible.builtin.command:
+    cmd: docker build -t mi_app:latest .
+    chdir: templates/Dockerfile
+  tags: docker
+
+- name: Ejecutar contenedores de la aplicación
+  ansible.builtin.docker_container:
+    name: "mi_app_container"
+    image: "mi_app:latest"
+    state: started
+    ports:
+      - "5000:5000" 
+    restart_policy: always
+  tags: docker
+
+- name: Instalar Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Configurar Nginx como balanceador de carga
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: '0644'
+  notify:
+    - Reiniciar Nginx
+  tags: nginx
+
+- name: Asegurar que Nginx esté habilitado y en ejecución
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Limpiar imágenes antiguas de Docker
+  ansible.builtin.command:
+    cmd: docker system prune -af
+  tags: docker
+
+- name: Limpiar contenedores parados de Docker
+  ansible.builtin.command:
+    cmd: docker container prune -f
+  tags: docker
+
+- name: Limpiar imágenes sin utilizar de Docker
+  ansible.builtin.command:
+    cmd: docker image prune -af
+  tags: docker
